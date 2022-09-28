@@ -1,7 +1,5 @@
 import requests
 import json
-from my_token import TOKEN
-from pprint import pprint
 
 
 class VK:
@@ -11,12 +9,6 @@ class VK:
         self.id = user_id
         self.version = version
         self.params = {'access_token': self.token, 'v': self.version}
-
-    def users_info(self):
-        url = 'https://api.vk.com/method/users.get'
-        params = {'user_ids': self.id}
-        response = requests.get(url, params={**self.params, **params})
-        return response.json()
 
     def load_photo(self, data):
         photos = {}
