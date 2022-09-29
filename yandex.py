@@ -7,6 +7,12 @@ class YandexDisk:
     def __init__(self, token):
         self.token = token
 
+    def create_folder(self, name_folder):
+        upload_url = "https://cloud-api.yandex.net/v1/disk/resources?"
+        headers = {"Authorization": TOKEN_Y}
+        params = {"path": name_folder}
+        requests.put(upload_url, headers=headers, params=params)
+
     def _get_upload_link(self, disk_file_path):
         upload_url = "https://cloud-api.yandex.net/v1/disk/resources/upload"
         headers = {"Authorization": TOKEN_Y}

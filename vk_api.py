@@ -6,10 +6,15 @@ from progress.bar import Bar
 class VK:
 
     def __init__(self, access_token, user_id, version='5.131'):
+        self.album_list = ["wall", "profile"]
         self.token = access_token
         self.id = user_id
         self.version = version
         self.params = {'access_token': self.token, 'v': self.version}
+
+    def search_in_albums(self):
+        for album in self.album_list:
+            return self.get_photo(album_name=album)
 
     def load_photo(self, data):
         bar = Bar('Подключаемся к ВК', max=5)
@@ -31,11 +36,19 @@ class VK:
         json_file(json_info)
         return photos
 
-    def get_photo(self, counter=5):
+    def get_photo(self, album_name, counter=5):
         url = 'https://api.vk.com/method/photos.get'
-        params = {'owner_id': self.id, "album_id": "profile", "photo_sizes": "1", "extended": "1", "count": counter}
+        params = {'owner_id': self.id, "album_id": album_name, "photo_sizes": "1", "extended": "1", "count": counter}
         response = requests.get(url, params={**self.params, **params})
+        print(response.json())
         return self.load_photo(response.json())
+
+    def get_albums(self):
+        url = 'https://api.vk.com/method/photos.getAlbums'
+        params = {'owner_id': self.id}
+        response = requests.get(url, params={**self.params, **params})
+        for album in response.json()["response"]["items"]:
+            return self.album_list.append(str(album["id"]))
 
 
 def json_file(json_info):
