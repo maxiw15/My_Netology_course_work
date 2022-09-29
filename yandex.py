@@ -19,5 +19,5 @@ class YandexDisk:
         file_response = requests.get(upload_url)
         response = requests.put(href, file_response)
         response.raise_for_status()
-        if response.status_code == 201:
-            print("Success")
+        if response.status_code != 201:
+            print("\nНеудачная загрузка файла")

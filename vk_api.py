@@ -1,5 +1,6 @@
 import requests
 import json
+from progress.bar import Bar
 
 
 class VK:
@@ -11,6 +12,7 @@ class VK:
         self.params = {'access_token': self.token, 'v': self.version}
 
     def load_photo(self, data):
+        bar = Bar('Подключаемся к ВК', max=5)
         photos = {}
         json_info = {}
         for elements in data["response"]["items"]:
@@ -24,6 +26,8 @@ class VK:
                 likes_count += "_id" + str(elements["id"])
                 photos[likes_count] = photo_url
                 json_info[likes_count] = photo_size
+            bar.next()
+        bar.finish()
         json_file(json_info)
         return photos
 
