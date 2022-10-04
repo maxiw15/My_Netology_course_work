@@ -17,7 +17,7 @@ class VK:
             return self.get_photo(album_name=album)
 
     def load_photo(self, data):
-        bar = Bar('Подключаемся к ВК', max=5)
+        bar = Bar('Скачиваем фотографии из Вконтакте', max=5)
         photos = {}
         json_info = {}
         for elements in data["response"]["items"]:
@@ -40,7 +40,6 @@ class VK:
         url = 'https://api.vk.com/method/photos.get'
         params = {'owner_id': self.id, "album_id": album_name, "photo_sizes": "1", "extended": "1", "count": counter}
         response = requests.get(url, params={**self.params, **params})
-        print(response.json())
         return self.load_photo(response.json())
 
     def get_albums(self):
@@ -52,5 +51,6 @@ class VK:
 
 
 def json_file(json_info):
-    with open('data.json', 'w') as outfile:
+    with open('data.json', 'a') as outfile:
         json.dump(json_info, outfile)
+        outfile.write("\n")
