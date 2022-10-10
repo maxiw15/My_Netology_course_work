@@ -1,4 +1,3 @@
-from my_token import TOKEN_Y
 import requests
 
 
@@ -9,13 +8,13 @@ class YandexDisk:
 
     def create_folder(self, name_folder):
         upload_url = "https://cloud-api.yandex.net/v1/disk/resources?"
-        headers = {"Authorization": TOKEN_Y}
+        headers = {"Authorization": self.token}
         params = {"path": name_folder}
         requests.put(upload_url, headers=headers, params=params)
 
     def _get_upload_link(self, disk_file_path):
         upload_url = "https://cloud-api.yandex.net/v1/disk/resources/upload"
-        headers = {"Authorization": TOKEN_Y}
+        headers = {"Authorization": self.token}
         params = {"path": disk_file_path, "overwrite": "true"}
         response = requests.get(upload_url, headers=headers, params=params)
         return response.json()

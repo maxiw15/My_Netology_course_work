@@ -11,6 +11,7 @@ class VK:
         self.id = user_id
         self.version = version
         self.params = {'access_token': self.token, 'v': self.version}
+        self.temp_catalog = []
 
     def search_in_albums(self):
         for album in self.album_list:
@@ -33,7 +34,7 @@ class VK:
                 json_info[likes_count] = photo_size
             bar.next()
         bar.finish()
-        json_file(json_info)
+        self.temp_catalog.append(json_info)  # Запись данных в файл
         return photos
 
     def get_photo(self, album_name, counter=5):
@@ -49,8 +50,8 @@ class VK:
         for album in response.json()["response"]["items"]:
             return self.album_list.append(str(album["id"]))
 
+    def json_file(self, temp):
+        with open('data.json', 'w') as outfile:
+            json.dump(temp, outfile)
 
-def json_file(json_info):
-    with open('data.json', 'a') as outfile:
-        json.dump(json_info, outfile)
-        outfile.write("\n")
+

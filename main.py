@@ -1,7 +1,10 @@
 from vk_api import VK
 from yandex import YandexDisk
-from my_token import TOKEN_VK, TOKEN_Y
 from progress.bar import Bar
+import configparser  # импортируем библиотеку
+
+config = configparser.ConfigParser()  # создаём объекта парсера
+config.read("my_token.ini")  # читаем конфиг
 
 
 def upload_files(album_list):
@@ -20,16 +23,20 @@ if __name__ == '__main__':
     file = open("data.json", "w")
     file.close()
 
-    access_token = TOKEN_VK
+    access_token = config["VK"]["token"]
+
     user_id = input("id пользователя vk ")
     # user_id = "1"
 
     vk = VK(access_token, user_id)
     vk.get_albums()
     albums_list = vk.album_list
+    temp = vk.temp_catalog
+    print(temp)
+    vk.json_file(temp)
 
-    TOKEN_Y = input("Введите токен с Полигона Яндекс диска ")
-    ya = YandexDisk(token=TOKEN_Y)
+    # TOKEN_Y = input("Введите токен с Полигона Яндекс диска ")
+    ya = YandexDisk(token=config["YANDEX"]["token"])
     ya.create_folder("my_photos")
     upload_files(albums_list)
     print("Успешное завершение программы")
