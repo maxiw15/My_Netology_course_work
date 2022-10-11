@@ -6,13 +6,13 @@ import configparser  # импортируем библиотеку
 
 def upload_files(album_list, count):
     for album in album_list:
-        # bar = Bar(f'Загружаем файлы на Яндекс Диск из альбома {album}', max=count)
+        bar = Bar(f'Загружаем файлы на Яндекс Диск из альбома {album}', max=count)
         dict_with_photo = vk.get_photo(album, count)
         for name, link in dict_with_photo.items():
             name = "my_photos/" + name
             ya.upload_file_to_disk(name, link)
-        #     bar.next()
-        # bar.finish()
+            bar.next()
+        bar.finish()
 
 
 if __name__ == '__main__':
@@ -30,7 +30,7 @@ if __name__ == '__main__':
     elif answer == "2":
         user_id = vk.get_id_with_screenname(screen_name=input("Введите screen name "))
     count = int(input("Введите количество фотографий, которые необходимо скачать "))
-    vk = VK(access_token, user_id, count)
+    vk = VK(access_token, bar_max=count, user_id=user_id)
     vk.get_albums()
     albums_list = vk.album_list
     # TOKEN_Y = input("Введите токен с Полигона Яндекс диска ")

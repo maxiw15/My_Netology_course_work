@@ -1,11 +1,12 @@
 import requests
 import json
+from datetime import datetime
 from progress.bar import Bar
 
 
 class VK:
 
-    def __init__(self, access_token, bar_max="0", user_id="1", version='5.131'):
+    def __init__(self, access_token, bar_max="5", user_id="1", version='5.131'):
         self.album_list = ["wall", "profile"]
         self.token = access_token
         self.id = user_id
@@ -19,7 +20,7 @@ class VK:
             return self.get_photo(album_name=album)
 
     def load_photo(self, data):
-        # bar = Bar('Скачиваем фотографии из Вконтакте', max=self.bar_max)
+        bar = Bar('Скачиваем фотографии из Вконтакте', max=self.bar_max)
         photos = {}
         json_info = {}
         for elements in data["response"]["items"]:
@@ -30,17 +31,18 @@ class VK:
                 photos[likes_count] = photo_url
                 json_info[likes_count] = photo_size
             else:
-                likes_count += "_id" + str(elements["id"])
+                likes_count += "-" + datetime.utcfromtimestamp(elements["date"]).strftime('%Y-%m-%d')  # добавляем дату
                 photos[likes_count] = photo_url
                 json_info[likes_count] = photo_size
-        #     bar.next()
-        # bar.finish()
+            bar.next()
+        bar.finish()
         self.temp_catalog.append(json_info)  # Запись данных в файл
         return photos
 
-    def get_photo(self, album_name: object, counter: object):
+    def get_photo(self, album_name, counter):
         url = 'https://api.vk.com/method/photos.get'
-        params = {'owner_id': self.id, "album_id": album_name, "photo_sizes": "1", "extended": "1", "count": int(counter)}
+        params = {'owner_id': self.id, "album_id": album_name, "photo_sizes": "1", "extended": "1",
+                  "count": int(counter)}
         response = requests.get(url, params={**self.params, **params})
         return self.load_photo(response.json())
 
@@ -57,9 +59,6 @@ class VK:
         response = requests.get(url, params={**self.params, **params})
         return response.json()["response"]["object_id"]
 
-
     def json_file(self, temp):
         with open('data.json', 'w') as outfile:
             json.dump(temp, outfile)
-
-
