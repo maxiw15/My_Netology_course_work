@@ -1,5 +1,4 @@
 import requests
-import json
 from datetime import datetime
 from progress.bar import Bar
 
@@ -26,14 +25,14 @@ class VK:
         for elements in data["response"]["items"]:
             likes_count = str(elements["likes"]["count"])
             photo_url = elements["sizes"][-1]["url"]
-            photo_size = str(elements["sizes"][-1]["height"]) + "*" + str(elements["sizes"][-1]["width"])
+            photo_size = str(elements["sizes"][-1]["type"])
             if photo_url not in photos:
                 photos[likes_count] = photo_url
-                json_info[likes_count] = photo_size
+                json_info[likes_count] = photo_size  # json
             else:
                 likes_count += "-" + datetime.utcfromtimestamp(elements["date"]).strftime('%Y-%m-%d')  # добавляем дату
                 photos[likes_count] = photo_url
-                json_info[likes_count] = photo_size
+                json_info[likes_count] = photo_size  # json
             bar.next()
         bar.finish()
         self.temp_catalog.append(json_info)  # Запись данных в файл
@@ -59,6 +58,4 @@ class VK:
         response = requests.get(url, params={**self.params, **params})
         return response.json()["response"]["object_id"]
 
-    def json_file(self, temp):
-        with open('data.json', 'w') as outfile:
-            json.dump(temp, outfile)
+

@@ -2,6 +2,7 @@ from vk_api import VK
 from yandex import YandexDisk
 from progress.bar import Bar
 import configparser  # импортируем библиотеку
+import json
 
 
 def upload_files(album_list, count):
@@ -30,11 +31,16 @@ if __name__ == '__main__':
     elif answer == "2":
         user_id = vk.get_id_with_screenname(screen_name=input("Введите screen name "))
     count = int(input("Введите количество фотографий, которые необходимо скачать "))
-    vk = VK(access_token, bar_max=count, user_id=user_id)
+    vk = VK(access_token, bar_max=count, user_id=user_id)  # создаем объект ВК
     vk.get_albums()
     albums_list = vk.album_list
-    # TOKEN_Y = input("Введите токен с Полигона Яндекс диска ")
-    ya = YandexDisk(token=config["YANDEX"]["token"])
+    TOKEN_Y = input("Введите токен с Полигона Яндекс диска ")
+    # ya = YandexDisk(token=config["YANDEX"]["token"])
+    ya = YandexDisk(token=TOKEN_Y)
     ya.create_folder("my_photos")
     upload_files(albums_list, count=vk.bar_max)
+
+    with open('data.json', 'w') as outfile:  # запись в json файл
+        json.dump(vk.temp_catalog, outfile)
+
     print("Успешное завершение программы")
